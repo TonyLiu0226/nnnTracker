@@ -6,52 +6,60 @@ A modern, interactive React application to track your No-Nut November progress t
 
 - 📅 **30 Day Calendar**: Visual representation of all 30 days of November
 - 🟢 **Automatic Success Tracking**: Days automatically turn green when no log is recorded
-- 📊 **Real-time Statistics**: Track success days, current streak, and failed days
-- 💾 **Persistent Storage**: Data is saved locally using localStorage
-- 🎨 **Beautiful UI**: Modern gradient design with smooth animations
-- 📱 **Responsive Design**: Works great on desktop and mobile devices
+- 📊 **Real-time Statistics**: Track goon count, current streak, and days remaining
 
-## How to Use
 
-1. **View Progress**: The calendar displays all 30 days of November
-2. **Toggle Status**: Click any day tile to toggle between success (green) and failed (red)
-3. **Track Stats**: View your success days, current streak, and failed days at the top
-4. **Reset Data**: Use the reset button to clear all data and start fresh
+## Quick Start
 
-## Color Coding
+### 1. Install Dependencies
 
-- 🟢 **Green**: Success - No masturbation logged for this day
-- 🔴 **Red**: Failed - Masturbation was logged for this day
-- ⚪ **White**: Future days that haven't occurred yet
-- 🔵 **Blue Border**: Current day of the month
-
-## Installation & Running
-
-1. Install dependencies:
 ```bash
 npm install
 ```
 
-2. Start the development server:
+### 2. Setup Supabase
+
+**Important:** You need to set up Supabase to use authentication!
+
+Follow the detailed guide in [SUPABASE_SETUP.md](./SUPABASE_SETUP.md)
+
+Quick steps:
+1. Create a Supabase project at [supabase.com](https://supabase.com)
+2. Get your project URL and anon key
+3. Create a `.env` file with your credentials:
+   ```env
+   VITE_SUPABASE_URL=your_project_url
+   VITE_SUPABASE_ANON_KEY=your_anon_key
+   ```
+4. Run the SQL schema in Supabase SQL Editor (see SUPABASE_SETUP.md)
+
+### 3. Start Development Server
+
 ```bash
 npm run dev
 ```
 
-3. Build for production:
+### 4. Build for Production
+
 ```bash
 npm run build
 ```
 
-## Future Enhancements
+## How to Use
 
-This app is designed to be extensible for future features:
+1. **Sign Up/Sign In**: Create an account or log in with your email and password
+2. **View Progress**: The calendar displays all 30 days of November
+3. **Toggle Status**: Click any day tile to toggle between success (green) and failed (red)
+4. **Track Stats**: View your goon count, current streak, and days remaining
+5. **Data Sync**: Your progress is automatically saved to the cloud
+6. **Sign Out**: Click the sign out button to log out
 
-- 👥 Friend tracking and leaderboards
-- 📝 Detailed logging with notes
-- 🏆 Achievement system
-- 📈 Historical data and yearly comparisons
-- 🔔 Daily reminders and notifications
-- 🌐 Social sharing features
+## Color Coding
+
+- 🟢 **Green**: Success - No log recorded for this day
+- 🔴 **Red**: Failed - Log recorded for this day
+- ⚪ **White**: Future days that haven't occurred yet
+- 🔵 **Blue Border**: Current day of the month
 
 ## Technology Stack
 
@@ -71,12 +79,6 @@ The app stores data in localStorage with the following structure:
   "lastUpdated": "2025-11-15T12:34:56.789Z"
 }
 ```
-
-This structure is designed to be easily extensible for future features like:
-- User profiles
-- Streak history
-- Friend data
-- Detailed logs with timestamps
 
 ## License
 
