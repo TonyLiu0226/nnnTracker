@@ -62,6 +62,16 @@
   color: black;
 }
 
+.form-group select {
+  padding: 0.875rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: white;
+  color: black;
+  }
+
 .form-group input:focus {
   outline: none;
   border-color: #667eea;

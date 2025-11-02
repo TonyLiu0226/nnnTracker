@@ -1,6 +1,11 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import './Auth.css'
+
+function getCurrentDayOfNovember() {
+  const now = new Date()
+  return now.getMonth() === 10 ? Math.min(now.getDate(), 30) : 0
+}
 
 export default function Auth() {
   const [isSignUp, setIsSignUp] = useState(false)
@@ -11,7 +16,13 @@ export default function Auth() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [message, setMessage] = useState(null)
+  const [selectedDays, setSelectedDays] = useState([])
 
+  const currentNovDay = useMemo(() => {
+    return getCurrentDayOfNovember()
+  }, [isSignUp])
+
+  console.log(currentNovDay)
   const { signIn, signUp } = useAuth()
 
   const handleSubmit = async (e) => {
@@ -57,7 +68,7 @@ export default function Auth() {
 
     try {
       if (isSignUp) {
-        await signUp(email, password, username)
+        await signUp(email, password, username, selectedDays)
         setMessage('Account created successfully! You can now sign in.')
         setEmail('')
         setUsername('')
@@ -83,6 +94,14 @@ export default function Auth() {
     setUsername('')
     setPassword('')
     setConfirmPassword('')
+  }
+
+  const handleDaySelection = (day, value) => {
+    if (value === 'yes') {
+      setSelectedDays([...selectedDays, day])
+    } else {
+      setSelectedDays(selectedDays.filter(d => d !== day))
+    }
   }
 
   return (
@@ -157,6 +176,28 @@ export default function Auth() {
               />
             </div>
           )}
+
+          {isSignUp && (
+            <div className="form-group">
+            <label>Select the days you have gooned so far</label>
+
+            {Array.from({ length: currentNovDay }, (_, i) => i + 1).map((day) => (
+              <div key={day} className="form-group">
+                <label htmlFor="password">Did you goon on November {day}?</label>
+                <select
+                  id={`${day}`}
+                  type="dropdown"
+                  defaultValue="no"
+                  onChange={(e) => handleDaySelection(day, e.target.value)}
+                >
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+              </div>
+            ))}
+          </div>
+          )}
+         
 
           <button type="submit" className="auth-button" disabled={loading}>
             {loading ? 'Loading...' : isSignUp ? 'Sign Up' : 'Sign In'}

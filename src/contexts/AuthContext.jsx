@@ -66,7 +66,7 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
-  const signUp = async (email, password, username) => {
+  const signUp = async (email, password, username, selectedDays) => {
     // Pre-check: username availability (for fast feedback)
     const { data: existingProfile } = await supabase
       .from('user_profiles')
@@ -83,7 +83,7 @@ export const AuthProvider = ({ children }) => {
       email,
       password,
       options: {
-        data: { username }
+        data: { username, selected_days: selectedDays }
       }
     })
     if (error) throw error

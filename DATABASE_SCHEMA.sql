@@ -144,6 +144,9 @@ AS $$
 DECLARE
   raw_name text;
   sanitized text;
+  selected_days_json jsonb;
+  selected_days_int int[] := '{}';
+  curr_day int := 1;
 BEGIN
   -- Read username from auth user's metadata; fallback to email local-part
   raw_name := COALESCE(NULLIF(TRIM((NEW.raw_user_meta_data->>'username')::text), ''), split_part(NEW.email, '@', 1));
@@ -164,8 +167,34 @@ BEGIN
     RAISE EXCEPTION 'Username is already taken';
   END IF;
 
+  -- Create user profile
   INSERT INTO public.user_profiles(user_id, username)
   VALUES (NEW.id, sanitized);
+
+  -- Optional: initialize tracker_data from metadata selected_days (array of day ints)
+  selected_days_json := NEW.raw_user_meta_data->'selected_days';
+  IF selected_days_json IS NOT NULL AND jsonb_typeof(selected_days_json) = 'array' THEN
+    SELECT COALESCE(array_agg(DISTINCT d), '{}')
+    INTO selected_days_int
+    FROM (
+      SELECT (e)::int AS d
+      FROM jsonb_array_elements_text(selected_days_json) AS t(e)
+      WHERE t.e ~ '^[0-9]+$'
+    ) AS vals
+    WHERE d BETWEEN 1 AND 30;
+  END IF;
+
+  -- Compute current day (UTC). If November, clamp 1..30; else start at 1
+  IF EXTRACT(MONTH FROM (now() AT TIME ZONE 'utc')) = 11 THEN
+    curr_day := LEAST(30, GREATEST(1, EXTRACT(DAY FROM (now() AT TIME ZONE 'utc'))::int));
+  ELSE
+    curr_day := 1;
+  END IF;
+
+  -- Insert initial tracker_data row
+  INSERT INTO public.tracker_data(user_id, failed_days, current_day)
+  VALUES (NEW.id, COALESCE(selected_days_int, '{}'), curr_day)
+  ON CONFLICT (user_id) DO NOTHING;
 
   RETURN NEW;
 END;
