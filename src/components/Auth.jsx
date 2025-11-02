@@ -5,6 +5,7 @@ import './Auth.css'
 export default function Auth() {
   const [isSignUp, setIsSignUp] = useState(false)
   const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -19,9 +20,27 @@ export default function Auth() {
     setMessage(null)
 
     // Validation
-    if (!email || !password) {
+    if (isSignUp && (!email || !username || !password)) {
       setError('Please fill in all fields')
       return
+    }
+
+    if (!isSignUp && (!email || !password)) {
+      setError('Please fill in all fields')
+      return
+    }
+
+    if (isSignUp) {
+      // Username validation
+      if (username.length < 3 || username.length > 20) {
+        setError('Username must be between 3 and 20 characters')
+        return
+      }
+
+      if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+        setError('Username can only contain letters, numbers, and underscores')
+        return
+      }
     }
 
     if (isSignUp && password !== confirmPassword) {
@@ -38,11 +57,13 @@ export default function Auth() {
 
     try {
       if (isSignUp) {
-        await signUp(email, password)
-        setMessage('Account created! Please check your email to verify your account.')
+        await signUp(email, password, username)
+        setMessage('Account created successfully! You can now sign in.')
         setEmail('')
+        setUsername('')
         setPassword('')
         setConfirmPassword('')
+        setTimeout(() => setIsSignUp(false), 2000)
       } else {
         await signIn(email, password)
         // User will be redirected automatically by AuthContext
@@ -59,6 +80,7 @@ export default function Auth() {
     setError(null)
     setMessage(null)
     setEmail('')
+    setUsername('')
     setPassword('')
     setConfirmPassword('')
   }
@@ -86,6 +108,25 @@ export default function Auth() {
               required
             />
           </div>
+
+          {isSignUp && (
+            <div className="form-group">
+              <label htmlFor="username">Username</label>
+              <input
+                id="username"
+                type="text"
+                placeholder="choose_username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                disabled={loading}
+                required
+                minLength={3}
+                maxLength={20}
+                pattern="[a-zA-Z0-9_]+"
+                title="Only letters, numbers, and underscores allowed"
+              />
+            </div>
+          )}
 
           <div className="form-group">
             <label htmlFor="password">Password</label>

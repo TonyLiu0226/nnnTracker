@@ -3,8 +3,8 @@ import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../supabaseClient'
 import '../App.css'
 
-function Tracker() {
-  const { user, signOut } = useAuth()
+function Tracker({ onNavigateToLeaderboard }) {
+  const { user, userProfile, signOut } = useAuth()
   const [failedDays, setFailedDays] = useState(new Set())
   const [currentDay, setCurrentDay] = useState(1)
   const [loading, setLoading] = useState(true)
@@ -165,27 +165,47 @@ function Tracker() {
   return (
     <div className="app-container">
       <header className="header">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', gap: '1rem', flexWrap: 'wrap' }}>
           <div style={{ fontSize: '0.9rem', opacity: 0.9 }}>
-            👤 {user?.email}
+            👤 {userProfile?.username || user?.email}
           </div>
-          <button 
-            onClick={handleSignOut}
-            style={{
-              background: 'rgba(255, 255, 255, 0.2)',
-              border: 'none',
-              color: 'white',
-              padding: '0.5rem 1rem',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontSize: '0.9rem',
-              transition: 'all 0.3s ease'
-            }}
-            onMouseOver={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.3)'}
-            onMouseOut={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.2)'}
-          >
-            Sign Out
-          </button>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <button 
+              onClick={onNavigateToLeaderboard}
+              style={{
+                background: 'rgba(255, 255, 255, 0.2)',
+                border: 'none',
+                color: 'white',
+                padding: '0.5rem 1rem',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '0.9rem',
+                transition: 'all 0.3s ease',
+                fontWeight: '600'
+              }}
+              onMouseOver={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.3)'}
+              onMouseOut={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.2)'}
+            >
+              🏆 Leaderboard
+            </button>
+            <button 
+              onClick={handleSignOut}
+              style={{
+                background: 'rgba(255, 255, 255, 0.2)',
+                border: 'none',
+                color: 'white',
+                padding: '0.5rem 1rem',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '0.9rem',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseOver={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.3)'}
+              onMouseOut={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.2)'}
+            >
+              Sign Out
+            </button>
+          </div>
         </div>
         <h1>🍂 No-Nut November Tracker</h1>
         <p>Track your progress through the month</p>
