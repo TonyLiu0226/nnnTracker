@@ -92,7 +92,7 @@ export default function Auth() {
           <h1>🍂 NNN Tracker</h1>
         </div>
 
-        <form onSubmit={handleSubmit} className="auth-form">
+        <form onSubmit={handleSubmit} className="auth-form" noValidate>
           {error && <div className="error-message">{error}</div>}
           {message && <div className="success-message">{message}</div>}
 
