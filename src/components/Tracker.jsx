@@ -38,7 +38,9 @@ function Tracker({ onNavigateToLeaderboard }) {
 
       if (data) {
         setFailedDays(new Set(data.failed_days || []))
-        setCurrentDay(data.current_day || getCurrentDayOfNovember())
+        const todayDay = getCurrentDayOfNovember()
+        const savedDay = data.current_day || 1
+        setCurrentDay(todayDay > savedDay ? todayDay : savedDay)
       } else {
         setCurrentDay(getCurrentDayOfNovember())
       }
@@ -50,7 +52,9 @@ function Tracker({ onNavigateToLeaderboard }) {
         try {
           const data = JSON.parse(saved)
           setFailedDays(new Set(data.failedDays || []))
-          setCurrentDay(data.currentDay || getCurrentDayOfNovember())
+          const todayDay = getCurrentDayOfNovember()
+          const savedDay = data.currentDay || 1
+          setCurrentDay(todayDay > savedDay ? todayDay : savedDay)
         } catch (e) {
           console.error('Error loading saved data:', e)
         }
@@ -65,11 +69,13 @@ function Tracker({ onNavigateToLeaderboard }) {
   async function saveUserData() {
     if (!user) return
 
+    const now = new Date()
     const data = {
       user_id: user.id,
       failed_days: Array.from(failedDays),
       current_day: currentDay,
-      updated_at: new Date().toISOString()
+      year: now.getFullYear(),
+      updated_at: now.toISOString()
     }
 
     try {
@@ -97,14 +103,20 @@ function Tracker({ onNavigateToLeaderboard }) {
   }
 
   function getCurrentDayOfNovember() {
+    if (!isItNovember()) {
+      return 1
+    }
+    return Math.min(new Date().getDate(), 30)
+  }
+
+  function isItNovember() {
     const now = new Date()
     const month = now.getMonth()
-    const day = now.getDate()
     
     if (month === 10) {
-      return Math.min(day, 30)
+      return true
     }
-    return 1
+    return false
   }
 
   const toggleDay = (day) => {
@@ -158,6 +170,47 @@ function Tracker({ onNavigateToLeaderboard }) {
     return (
       <div className="app-container">
         <div className="loading-spinner">Loading your data...</div>
+      </div>
+    )
+  }
+
+  if (!isItNovember()) {
+    return (
+      <div className="app-container">
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '60vh',
+          textAlign: 'center',
+          gap: '1rem'
+        }}>
+          <div style={{ fontSize: '4rem' }}>🍂</div>
+          <h1 style={{ fontSize: '2rem', margin: 0 }}>Come Back in November</h1>
+          <p style={{ opacity: 0.9, maxWidth: '400px', fontSize: '0.8rem' }}>
+            The No-Nut November Tracker is only available during the month of November. See you then!
+          </p>
+          <button
+            onClick={handleSignOut}
+            style={{
+              marginTop: '1rem',
+              background: 'rgba(255, 255, 255, 0.2)',
+              border: 'none',
+              color: 'white',
+              padding: '0.5rem 1rem',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '0.9rem',
+              transition: 'all 0.3s ease',
+              fontWeight: '600'
+            }}
+            onMouseOver={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.3)'}
+            onMouseOut={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.2)'}
+          >
+            Sign Out
+          </button>
+        </div>
       </div>
     )
   }

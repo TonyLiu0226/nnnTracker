@@ -24,7 +24,8 @@ CREATE TABLE IF NOT EXISTS tracker_data (
   failed_days INTEGER[] DEFAULT '{}',
   current_day INTEGER DEFAULT 1,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()),
-  UNIQUE(user_id)
+  UNIQUE(user_id),
+  year INTEGER DEFAULT 2026
 );
 
 -- 3. Enable Row Level Security (RLS)

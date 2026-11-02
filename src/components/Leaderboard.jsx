@@ -18,6 +18,8 @@ function Leaderboard({ onBack }) {
     setError(null)
 
     try {
+      const currentYear = new Date().getFullYear()
+
       // Fetch all user profiles and their tracker data
       const { data: profiles, error: profileError } = await supabase
         .from('user_profiles')
@@ -28,6 +30,7 @@ function Leaderboard({ onBack }) {
       const { data: trackerData, error: trackerError } = await supabase
         .from('tracker_data')
         .select('*')
+        .eq('year', currentYear)
 
       if (trackerError) throw trackerError
 
@@ -172,7 +175,7 @@ function Leaderboard({ onBack }) {
           </button>
         </div>
         <h1>🏆 Leaderboard</h1>
-        <p>See how everyone is doing this November</p>
+        <p>See how everyone is doing this November {new Date().getFullYear()}</p>
       </header>
 
       {error && (
